@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+export interface UserTypes {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    isAdmin?: boolean;
+    status?: "ACTIVE" | "CANCELED";
+  }
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -13,3 +22,5 @@ const userSchema = new mongoose.Schema({
 });
 
 export const User = mongoose.model("User", userSchema);
+
+
