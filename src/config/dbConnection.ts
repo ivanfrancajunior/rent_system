@@ -8,7 +8,7 @@ const connection = async () => {
   try {
     const conn = await mongoose.connect(MONGO_URI);
 
-    if (conn) return console.log("database connection");
+    if (conn) return console.log("database connected");
 
     return conn;
   } catch (error) {
