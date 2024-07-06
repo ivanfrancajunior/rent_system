@@ -3,18 +3,15 @@ import { Payment, PaymentTypes } from "../models/Payment";
 import { User } from "../models/User";
 import { StatusCodes } from "http-status-codes";
 
-class PaymentController {
-  //realizar pagemento
+export class PaymentController {
   static async confirmPayment(req: Request, res: Response) {}
 
-  //buscar pagementos
   static async getAllPayments(req: Request, res: Response) {
     const payments = await Payment.find();
 
     return res.status(StatusCodes.OK).json(payments);
   }
 
-  //buscar pagementos em aberto
   static async getAllOpenPayments(req: Request, res: Response) {
     const payments = await Payment.find();
 
@@ -23,7 +20,6 @@ class PaymentController {
     return res.status(StatusCodes.OK).json(inOpen);
   }
 
-  //buscar pagementos por id de usuário
   static async getUserPayments(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -39,7 +35,6 @@ class PaymentController {
     return res.status(StatusCodes.OK).json(payments);
   }
 
-  //buscar pagemento de usuário por mes
   static async getLastUserPayment(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -59,7 +54,6 @@ class PaymentController {
     return res.status(StatusCodes.OK).json(payment);
   }
 
-  //buscar pagementos por query
   static async getUsersPaymentsByQuery(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -91,7 +85,6 @@ class PaymentController {
     return res.status(StatusCodes.OK).json(payment);
   }
 
-  // alterar pagamento
   static async updatePayment(req: Request, res: Response) {
     const { monthRef, status }: PaymentTypes = req.body;
     const file = req.file;
@@ -120,7 +113,6 @@ class PaymentController {
         ? payment.status === "IS_CLOSED"
         : payment.status === "IS_OPEN";
     }
-    //TODO: IMPLEMENT FILE UPLOAD + CONFIG CLOUDNARY
     if (file) {
       payment.fileUrl = file.path;
     }
