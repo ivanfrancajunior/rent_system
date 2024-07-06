@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { User, UserTypes } from "../models/Users";
+import { User, UserTypes } from "../models/User";
 
 export class UserController {
   static async createUser(req: Request, res: Response) {
@@ -79,13 +79,11 @@ export class UserController {
     //TODO
   }
 
- //checar pagamentos
+  //checar pagamentos
 
- //upload comprovante
+  //upload comprovante
 
-//abrir solicitação
+  //abrir solicitação
 
-//verificar status da solicitação
-
-
+  //verificar status da solicitação
 }

@@ -5,6 +5,7 @@ export interface PaymentTypes {
   fileUrl: string;
   paymentDate: Date;
   monthRef: string;
+  status: "IS_OPEN" | "IS_CLOSED";
 }
 
 const paymentSchema = new mongoose.Schema({
@@ -12,6 +13,7 @@ const paymentSchema = new mongoose.Schema({
   fileUrl: { type: String, require: true },
   paymentDate: { type: Date, default: Date.now },
   monthRef: { type: String },
+  status: { type: String, enum: ["IS_OPEN", "IS_CLOSED"], default: "IS_OPEN" },
 });
 
 export const Payment = mongoose.model("Payment", paymentSchema);

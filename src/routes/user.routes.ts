@@ -15,4 +15,8 @@ router.get("/:id", (req, res) => {
   return UserController.getUser(req, res);
 });
 
+router.put("/:id", (req, res) => {
+  return UserController.updateUserProfile(req, res);
+});
+
 export default router;
