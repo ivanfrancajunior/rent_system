@@ -2,9 +2,58 @@ import { Request, Response } from "express";
 import { Payment, PaymentTypes } from "../models/Payment";
 import { User } from "../models/User";
 import { StatusCodes } from "http-status-codes";
-
+import path from "path";
+/*
+export interface PaymentTypes {
+  userId: string;
+  fileUrl: string;
+  paymentDate: Date;
+  monthRef: string;
+  status: "IS_OPEN" | "IS_CLOSED";
+}
+*/
 export class PaymentController {
-  static async confirmPayment(req: Request, res: Response) {}
+  static async confirmPayment(req: Request, res: Response) {
+    const file = req.file;
+
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    //verificar usuário
+    if (!user)
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "user not found" });
+
+    //recuperar o arquivo
+    if (!file)
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "file is required" });
+
+    const fileUrl = path.join("tmp", file.filename);
+
+    console.log(fileUrl);
+
+    //criar pagamento
+    const new_payment = new Payment({
+      userId: user._id,
+      fileUrl,
+      monthReference: new Date().toLocaleDateString("pt-BR", {
+        month: "2-digit",
+        year: "numeric",
+      }),
+    });
+
+    const payment = await new_payment.save();
+
+    user.payments.push(payment._id);
+
+    await user.save();
+
+    return res.status(StatusCodes.CREATED).json(payment);
+  }
 
   static async getAllPayments(req: Request, res: Response) {
     const payments = await Payment.find();
@@ -118,6 +167,7 @@ export class PaymentController {
     }
 
     await payment.save();
+
 
     return res.status(StatusCodes.OK).send();
   }

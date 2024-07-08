@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { PaymentController } from "../controllers/payment.controller";
+import { upload } from "../middlewares/handle-upload";
 
 const router = Router();
 
@@ -7,8 +8,8 @@ router.get("/", PaymentController.getAllPayments);
 router.get("/opens", PaymentController.getAllOpenPayments);
 router.get("/id", PaymentController.getLastUserPayment);
 router.get("/:id/last", PaymentController.getLastUserPayment);
-router.post("/", PaymentController.confirmPayment);
-router.put("/:id", PaymentController.updatePayment);
+router.post("/:id", upload.single("file"), PaymentController.confirmPayment);
+router.put("/:id", upload.single("file"), PaymentController.updatePayment);
 
 export default router;
 
