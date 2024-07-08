@@ -8,6 +8,9 @@ export interface UserTypes {
   email: string;
   isAdmin?: boolean;
   status?: "ACTIVE" | "CANCELED";
+  payments?: mongoose.Schema.Types.ObjectId[];
+  requests?: mongoose.Schema.Types.ObjectId[];
+  role: "ADMIN" | "EMPLOYEE" | "USER";
 }
 
 const userSchema = new mongoose.Schema({
@@ -18,6 +21,8 @@ const userSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, require: true, default: false },
   status: { type: String, enum: ["ACTIVE", "CANCELED"], default: "ACTIVE" },
   payments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Payment" }],
+  requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Request" }],
+  role: { type: String, enum: ["ADMIN", "EMPLOYEE", "USER"], required: true },
 });
 
 export const User = mongoose.model("User", userSchema);
