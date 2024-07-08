@@ -3,15 +3,7 @@ import { Payment, PaymentTypes } from "../models/Payment";
 import { User } from "../models/User";
 import { StatusCodes } from "http-status-codes";
 import path from "path";
-/*
-export interface PaymentTypes {
-  userId: string;
-  fileUrl: string;
-  paymentDate: Date;
-  monthRef: string;
-  status: "IS_OPEN" | "IS_CLOSED";
-}
-*/
+
 export class PaymentController {
   static async confirmPayment(req: Request, res: Response) {
     const file = req.file;
@@ -159,8 +151,8 @@ export class PaymentController {
     }
     if (status) {
       status === "IS_OPEN"
-        ? payment.status === "IS_CLOSED"
-        : payment.status === "IS_OPEN";
+        ? payment.status = "IS_CLOSED"
+        : payment.status = "IS_OPEN";
     }
     if (file) {
       payment.fileUrl = file.path;
