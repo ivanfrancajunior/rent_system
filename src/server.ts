@@ -3,6 +3,7 @@ import userRoutes from "./routes/user.routes";
 import paymentRoutes from "./routes/payment.routes";
 import requestRoutes from "./routes/request.routes";
 import dotenv from "dotenv";
+import { asyncHandler } from "./middlewares/async-handler";
 import "./config/dbConnection";
 
 dotenv.config();
@@ -10,6 +11,8 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+
+app.use(asyncHandler);
 
 app.use("/api/users", userRoutes);
 
