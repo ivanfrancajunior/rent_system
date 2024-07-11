@@ -4,7 +4,6 @@ import { User } from "../models/User";
 import { StatusCodes } from "http-status-codes";
 
 export class RequestController {
-  //criar request
   static async createRequest(req: Req, res: Response) {
     const req_user = req.user;
 
@@ -31,7 +30,6 @@ export class RequestController {
     return res.status(StatusCodes.CREATED).send();
   }
 
-  //pegar todas requests default em aberto [add query]
   static async getRequests(req: Req, res: Response) {
     const { status } = req.query;
 
@@ -73,7 +71,6 @@ export class RequestController {
     }
   }
 
-  //pegar todas de um usuário especifico requests
   static async getUserRequests(req: Req, res: Response) {
     const { id } = req.params;
 
@@ -89,10 +86,12 @@ export class RequestController {
     return res.status(StatusCodes.OK).json(requests);
   }
 
-  //atualizar request
   static async updateRequests(req: Req, res: Response) {
     const { id } = req.params;
     const { description, assignedTo, status }: RequestTypes = req.body;
+    const req_user = req.user;
+
+    const user = await User.findById(req_user?.id);
 
     const request = await Request.findById(id);
 
@@ -104,10 +103,10 @@ export class RequestController {
     if (description) {
       request.description = description;
     }
-    if (assignedTo) {
+    if (assignedTo && user?.role === "ADMIN") {
       request.assignedTo = assignedTo;
     }
-    if (status) {
+    if ((status && user?.role === "ADMIN") || user?.role === "EMPLOYEE") {
       request.status = status;
     }
 

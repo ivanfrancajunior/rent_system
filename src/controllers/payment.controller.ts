@@ -8,17 +8,20 @@ export class PaymentController {
   static async confirmPayment(req: Request, res: Response) {
     const file = req.file;
 
+    if (!file)
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Sending proof is mandatory" });
+
     const { id } = req.params;
 
     const user = await User.findById(id);
 
-    //verificar usuário
     if (!user)
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "user not found" });
 
-    //recuperar o arquivo
     if (!file)
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -28,7 +31,6 @@ export class PaymentController {
 
     console.log(fileUrl);
 
-    //criar pagamento
     const new_payment = new Payment({
       userId: user._id,
       fileUrl,
@@ -86,7 +88,7 @@ export class PaymentController {
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "user not found" });
 
-    const payments = await Payment.find(user.id);
+    const payments = await Payment.find({ userId: user.id });
 
     const payment = payments.filter(
       (payment) => payment.status === "IS_CLOSED"
@@ -132,6 +134,11 @@ export class PaymentController {
     const req_user = req.user;
     const { id } = req.params;
 
+    if (!file)
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Sending proof is mandatory" });
+
     const user = await User.findById(req_user?.id);
 
     if (!user)
@@ -151,15 +158,14 @@ export class PaymentController {
     }
     if (status) {
       status === "IS_OPEN"
-        ? payment.status = "IS_CLOSED"
-        : payment.status = "IS_OPEN";
+        ? (payment.status = "IS_CLOSED")
+        : (payment.status = "IS_OPEN");
     }
     if (file) {
       payment.fileUrl = file.path;
     }
 
     await payment.save();
-
 
     return res.status(StatusCodes.OK).send();
   }

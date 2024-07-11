@@ -12,13 +12,13 @@ const app = express();
 
 app.use(express.json());
 
-app.use(asyncHandler);
-
 app.use("/api/users", userRoutes);
 
 app.use("/api/payments", paymentRoutes);
 
 app.use("/api/requests", requestRoutes);
+
+// app.use(asyncHandler);
 
 app.get("/v1/api", (req, res) => {
   return res.json({ message: "app running" });
