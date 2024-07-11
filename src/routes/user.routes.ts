@@ -1,22 +1,41 @@
 import { Router } from "express";
 import { UserController } from "../controllers/users.controller";
+import { handleAuth } from "../middlewares/auth-handler";
+import { verifyPermission } from "../middlewares/users/verify-permission";
+import {
+  validateCreateUser,
+  validateSigninUser,
+  validateUpdateUser,
+} from "../middlewares/users/user-validations";
+import { handleValidate } from "../middlewares/handle-validations";
 
 const router = Router();
 
-router.post("/new", (req, res) => {
-  return UserController.createUser(req, res);
-});
+router.post(
+  "/new",
+  validateCreateUser(),
+  handleValidate,
+  UserController.createUser
+);
 
-router.get("/", (req, res) => {
-  return UserController.getUsers(req, res);
-});
+router.post(
+  "/login",
+  validateSigninUser(),
+  handleValidate,
+  UserController.loginUser
+);
 
-router.get("/:id", (req, res) => {
-  return UserController.getUser(req, res);
-});
+router.get("/", handleAuth, UserController.getUsers);
 
-router.put("/:id", (req, res) => {
-  return UserController.updateUserProfile(req, res);
-});
+router.get("/:id", handleAuth, UserController.getUser);
+
+router.put(
+  "/:id",
+  handleAuth,
+  verifyPermission(["ADNIN"]),
+  validateUpdateUser(),
+  handleValidate,
+  UserController.updateUserProfile
+);
 
 export default router;
