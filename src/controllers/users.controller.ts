@@ -12,7 +12,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export class UserController {
-  static async createUser(req: Request, res: Response) {
+  static async createUser(req: Request, res: Response): Promise<Response> {
     const { name, address, phone, email, password }: UserTypes = req.body;
 
     const already_exists = await User.findOne({ email });
@@ -39,7 +39,7 @@ export class UserController {
     return res.status(StatusCodes.CREATED).json(user);
   }
 
-  static async loginUser(req: Request, res: Response) {
+  static async loginUser(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -48,7 +48,7 @@ export class UserController {
       return res.status(404).json({ error: "User not found." });
     }
 
-    const passwordMatch = bcrypt.compare(password, user.password!);
+    const passwordMatch = await bcrypt.compare(password, user.password!);
 
     if (!passwordMatch) {
       return res.status(401).json({ error: "Wrong password" });
@@ -61,7 +61,7 @@ export class UserController {
     return res.status(200).json({ token });
   }
 
-  static async getUsers(req: Request, res: Response) {
+  static async getUsers(req: Request, res: Response): Promise<Response> {
     const user = req.user;
 
     if (!user?.isAdmin)
@@ -74,7 +74,7 @@ export class UserController {
     return res.status(StatusCodes.OK).json(users);
   }
 
-  static async getUser(req: Request, res: Response) {
+  static async getUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
 
     const user = await User.findById(id);
@@ -87,7 +87,10 @@ export class UserController {
     return res.status(StatusCodes.OK).json(user);
   }
 
-  static async updateUserProfile(req: Request, res: Response) {
+  static async updateUserProfile(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
     const { name, address, phone, email, status } = req.body;
 
     const { id } = req.params;
@@ -119,5 +122,4 @@ export class UserController {
 
     return res.status(StatusCodes.OK).json(user);
   }
-
 }
