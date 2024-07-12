@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export class UserController {
   static async createUser(req: Request, res: Response): Promise<Response> {
-    const { name, address, phone, email, password }: UserTypes = req.body;
+    const { name, address, phone, email, password, role }: UserTypes = req.body;
 
     const already_exists = await User.findOne({ email });
 
@@ -23,12 +23,14 @@ export class UserController {
         .json({ error: "User already exists" });
 
     const hashedPassword = await generateHashPassword(password);
+
     const user = await User.create({
       name,
       address,
       phone,
       email,
       password: hashedPassword,
+      role,
     });
 
     if (!user)
@@ -62,14 +64,15 @@ export class UserController {
   }
 
   static async getUsers(req: Request, res: Response): Promise<Response> {
-    const user = req.user;
+    const req_user = req.user;
 
-    if (!user?.isAdmin)
+    const users = await User.find();
+
+    if (req_user?.role === "ADMIN") {
       return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: "Unauthorized" });
-
-    const users = await User.find({});
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ error: "Unauthorized" });
+    }
 
     return res.status(StatusCodes.OK).json(users);
   }
