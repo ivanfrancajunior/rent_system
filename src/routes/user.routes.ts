@@ -25,7 +25,11 @@ router.post(
   UserController.loginUser
 );
 
-router.get("/", handleAuth, UserController.getUsers);
+router.get(
+  "/",
+  handleAuth,
+  UserController.getUsers
+);
 
 router.get("/:id", handleAuth, UserController.getUser);
 

@@ -4,7 +4,6 @@ import paymentRoutes from "./routes/payment.routes";
 import requestRoutes from "./routes/request.routes";
 import dotenv from "dotenv";
 import { asyncHandler } from "./middlewares/async-handler";
-import "./config/dbConnection";
 
 dotenv.config();
 
@@ -24,4 +23,4 @@ app.get("/v1/api", (req, res) => {
   return res.json({ message: "app running" });
 });
 
-export { app };
+export default app;

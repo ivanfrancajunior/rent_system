@@ -11,7 +11,7 @@ export interface UserTypes {
   status?: "ACTIVE" | "CANCELED";
   payments?: mongoose.Schema.Types.ObjectId[];
   requests?: mongoose.Schema.Types.ObjectId[];
-  role: "ADMIN" | "EMPLOYEE" | "USER";
+  role?: "ADMIN" | "EMPLOYEE" | "USER";
 }
 
 const userSchema = new mongoose.Schema({
@@ -27,8 +27,6 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ["ADMIN", "EMPLOYEE", "USER"],
-    required: true,
-    default: "USER",
   },
 });
 

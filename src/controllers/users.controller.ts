@@ -30,7 +30,7 @@ export class UserController {
       phone,
       email,
       password: hashedPassword,
-      role,
+      role: role ? role : "USER",
     });
 
     if (!user)
@@ -63,16 +63,13 @@ export class UserController {
     return res.status(200).json({ token });
   }
 
-  static async getUsers(req: Request, res: Response): Promise<Response> {
+  static async getUsers(req: Request, res: Response) {
     const req_user = req.user;
 
-    const users = await User.find();
+    if (req_user?.role !== "ADMIN")
+      return res.status(401).json({ error: "Unauthorized" });
 
-    if (req_user?.role === "ADMIN") {
-      return res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ error: "Unauthorized" });
-    }
+    const users = await User.find();
 
     return res.status(StatusCodes.OK).json(users);
   }

@@ -10,14 +10,14 @@ export const handleAuth = async (
 ) => {
   const authHeader = req.headers["authorization"];
 
-  const bearer = authHeader && authHeader.split(" ")[1];
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!bearer) {
+  if (!token) {
     return res.status(401).json({ errors: ["Not authorized"] });
   }
 
   try {
-    const decodedToken = jwt.verify(bearer, JWT_SECRET) as JwtPayload;
+    const decodedToken = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
     const user = await User.findById(decodedToken.id);
 

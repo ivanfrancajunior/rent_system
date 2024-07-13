@@ -4,7 +4,7 @@
   "description": "sistema para controle de solicitações e prestação e cobrança de servicos ",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
   "author": "ivan jr",
@@ -16,7 +16,7 @@
     "express-validator": "^7.1.0",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.4",
+    "mongoose": "^8.5.0",
     "multer": "^1.4.5-lts.1",
     "ulid": "^2.3.0"
   },
