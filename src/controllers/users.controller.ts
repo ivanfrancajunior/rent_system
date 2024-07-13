@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import { generateHashPassword } from "../utils/generatePassword";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -69,7 +70,7 @@ export class UserController {
     if (req_user?.role !== "ADMIN")
       return res.status(401).json({ error: "Unauthorized" });
 
-    const users = await User.find();
+    const users = await User.find().select("-password");
 
     return res.status(StatusCodes.OK).json(users);
   }
@@ -77,13 +78,16 @@ export class UserController {
   static async getUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
 
-    const user = await User.findById(id);
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid ID" });
 
-    if (!user)
+    const user = await User.findById(id).select("-password");
+
+    if (!user) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "user not found" });
-
+    }
     return res.status(StatusCodes.OK).json(user);
   }
 

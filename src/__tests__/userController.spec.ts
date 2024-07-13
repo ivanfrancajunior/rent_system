@@ -210,4 +210,169 @@ describe("userController", () => {
       expect(sut.body).toBeInstanceOf(Array);
     });
   });
+  describe("getUser method", () => {
+    it("should not able to get a user without a token - status 401", async () => {
+      const sut = await request(app).get("/api/users/1");
+      expect(sut.statusCode).toEqual(401);
+      expect(sut.body).toHaveProperty("errors", ["Not authorized"]);
+    });
+
+    it("should return  a error with a invalid  user id - status 400", async () => {
+      const query_user = {
+        name: "user user",
+        address: "user address",
+        phone: "12345678910",
+        email: "query_user@email.com",
+        password: "user123",
+      };
+
+      const test_user = await request(app)
+        .post("/api/users/new")
+        .send(query_user);
+
+      const id = "74";
+
+      const auth_user = await request(app).post("/api/users/login").send({
+        email: query_user.email,
+        password: query_user.password,
+      });
+
+      const { token } = await auth_user.body;
+
+      const sut = await request(app)
+        .get("/api/users/" + id)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(sut.statusCode).toBe(400);
+      expect(sut.body).toHaveProperty("error", "Invalid ID");
+    });
+    it("should able to get a user with a token and a valid id- status 401", async () => {
+      const query_user = {
+        name: "user user",
+        address: "user address",
+        phone: "12345678910",
+        email: "query_user@email.com",
+        password: "user123",
+      };
+
+      const test_user = await request(app)
+        .post("/api/users/new")
+        .send(query_user);
+
+      const id = await test_user.body._id;
+
+      const auth_user = await request(app).post("/api/users/login").send({
+        email: query_user.email,
+        password: query_user.password,
+      });
+
+      const { token } = await auth_user.body;
+
+      const sut = await request(app)
+        .get("/api/users/" + id)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(sut.statusCode).toBe(200);
+      expect(sut.body).toHaveProperty("email", query_user.email);
+      expect(sut.body).toHaveProperty("_id", id);
+    });
+  });
+
+  describe("UpdateUser method", () => {
+    it("should not able to update a user without a token - status 401", async () => {
+      const current_user = {
+        name: "current user",
+        address: "current user address",
+        phone: "12345678910",
+        email: "current_user@email.com",
+        password: "currentuser123",
+      };
+
+      const sut_user = await request(app)
+        .post("/api/users/new")
+        .send(current_user);
+
+      const id = await sut_user.body._id;
+
+      const auth_user = await request(app).post("/api/users/login").send({
+        email: current_user.email,
+        password: current_user.password,
+      });
+
+      const { token } = await auth_user.body;
+
+      const sut = await request(app).put("/api/users/" + id);
+
+      expect(sut.statusCode).toBe(401);
+      expect(sut.body).toHaveProperty("errors", ["Not authorized"]);
+    });
+    it("should not able to update a user without a token and a 'ADMIN' role- status 401", async () => {
+      const current_user = {
+        name: "current user",
+        address: "current user address",
+        phone: "12345678910",
+        email: "current_user@email.com",
+        password: "currentuser123",
+      };
+
+      const sut_user = await request(app)
+        .post("/api/users/new")
+        .send(current_user);
+
+      const id = await sut_user.body._id;
+
+      const auth_user = await request(app).post("/api/users/login").send({
+        email: current_user.email,
+        password: current_user.password,
+      });
+
+      const { token } = await auth_user.body;
+
+      const sut = await request(app)
+        .put("/api/users/" + id)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(sut.statusCode).toBe(401);
+      expect(sut.body).toHaveProperty("error", "Unauthorized");
+    });
+    it("should able to update a user with a 'ADMIN' role - status 200", async () => {
+      const current_user = {
+        name: "current user",
+        address: "current user address",
+        phone: "12345678910",
+        email: "current_user@email.com",
+        password: "currentuser123",
+        role: "ADMIN",
+      };
+
+      const sut_user = await request(app)
+        .post("/api/users/new")
+        .send(current_user);
+
+      const id = await sut_user.body._id;
+
+      const auth_user = await request(app).post("/api/users/login").send({
+        email: current_user.email,
+        password: current_user.password,
+      });
+
+
+      const updated_fields = {
+        name: "updated user",
+        address: "updated user address",
+        phone: "12345678910",
+        email: "updated_user@email.com",
+        password: "updateduser123",
+      };
+      const { token } = await auth_user.body;
+
+      const sut = await request(app)
+        .put("/api/users/" + id)
+        .set("Authorization", `Bearer ${token}`)
+        .send(updated_fields);
+
+      expect(sut.statusCode).toBe(200);
+      // expect(sut.body).toHaveProperty("error", "Unauthorized");
+    });
+  });
 });
