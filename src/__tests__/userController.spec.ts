@@ -356,7 +356,6 @@ describe("userController", () => {
         password: current_user.password,
       });
 
-
       const updated_fields = {
         name: "updated user",
         address: "updated user address",
@@ -372,7 +371,9 @@ describe("userController", () => {
         .send(updated_fields);
 
       expect(sut.statusCode).toBe(200);
-      // expect(sut.body).toHaveProperty("error", "Unauthorized");
+      expect(sut.body).toHaveProperty("name", updated_fields.name);
+      expect(sut.body).toHaveProperty("email", updated_fields.email);
+      expect(sut.body).toHaveProperty("_id", id);
     });
   });
 });

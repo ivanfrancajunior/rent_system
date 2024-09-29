@@ -3,4 +3,5 @@ node_modules
 notes.md
 /tmp/*
 
+coverage
 TODO.md
